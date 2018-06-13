@@ -1,48 +1,43 @@
 package mal;
 
-import java.io.IOException;
-
-import mal.readline;
+import java.util.Scanner;
 
 public class step0_repl {
-    // read
-    public static String READ(String str) {
-        return str;
-    }
+	// read
+	public static String READ(String str) {
+		return str;
+	}
 
-    // eval
-    public static String EVAL(String ast, String env) {
-        return ast;
-    }
+	// eval
+	public static String EVAL(String str) {
+		return str;
+	}
 
-    // print
-    public static String PRINT(String exp) {
-        return exp;
-    }
+	// print
+	public static String PRINT(String str) {
+		return str;
+	}
 
-    // repl
-    public static String RE(String env, String str) {
-        return EVAL(READ(str), env);
-    }
+	// repl
+	public static String RE(String str) {
+		return PRINT(EVAL(READ(str)));
+	}
 
-    public static void main(String[] args) {
-        String prompt = "user> ";
+	public static void main(String[] args) {
+		String prompt = "user> ";
 
-        if (args.length > 0 && args[0].equals("--raw")) {
-            readline.mode = readline.Mode.JAVA;
-        }
-        while (true) {
-            String line;
-            try {
-                line = readline.readline(prompt);
-                if (line == null) { continue; }
-            } catch (readline.EOFException e) {
-                break;
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
-                break;
-            }
-            System.out.println(PRINT(RE(null, line)));
-        }
-    }
+		Scanner reader = new Scanner(System.in);
+		while (true) {
+			String line;
+			try {
+				System.out.print(prompt);
+				line = reader.nextLine();
+				if (line == null || line.isEmpty()) { continue; }
+			} catch (java.util.NoSuchElementException e) {
+				System.out.println("\nBye bye");
+				break;
+			}
+			System.out.println(RE(line));
+		}
+	}
 }
