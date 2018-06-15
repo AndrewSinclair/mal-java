@@ -15,7 +15,7 @@ public class step1_read_print {
 
 	// print
 	public static String PRINT(types.MalType form) {
-		return printer.pr_str(form);
+		return printer.pr_str(form, true);
 	}
 
 	// repl

@@ -23,4 +23,19 @@ public class types {
 			this.value = value;
 		}
 	}
+	public static class MalString extends MalType {
+		public String value;
+		public MalString(String value) {
+			this.value = value;
+		}
+	}
+	public static class MalTrue extends MalType {
+		public static boolean value = true;
+	}
+	public static class MalFalse extends MalType {
+		public static boolean value = false;
+	}
+	public static class MalNil extends MalType {
+		public static Object value = null;
+	}
 }

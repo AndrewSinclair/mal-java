@@ -18,7 +18,7 @@ public class reader {
 
 	public static List<Token> tokenizer(String str) {
 		List<Token> tokens = new ArrayList<>();
-		Pattern pattern = Pattern.compile("[\\s,]*(~@|[\\[\\]{}()'`~^@]|\"(?:\\.|[^\\\"])*\"|;.*|[^\\s\\[\\]{}('\"`,;)]*)");
+		Pattern pattern = Pattern.compile("[\\s,]*(~@|[\\[\\]{}()'`~@]|\"(?:[\\\\].|[^\\\\\"])*\"|;.*|[^\\s \\[\\]{}()'\"`~@,;]*)");
 		Matcher matcher = pattern.matcher(str);
 		while (matcher.find()) {
 			for (int i = 1; i <= matcher.groupCount(); i++) {
@@ -76,6 +76,17 @@ public class reader {
 		return true;
 	}
 
+	public static String encode(String str) {
+		int length = str.length();
+		String output = str.substring(1, length - 1);
+
+		output = output.replace("\\\"", "\"");
+		output = output.replace("\\n", "\n");
+		output = output.replace("\\\\", "\\");
+
+		return output;
+	}
+
 	public static types.MalType read_atom(Reader rdr) {
 		types.MalType output;
 		Token token = rdr.next();
@@ -83,6 +94,14 @@ public class reader {
 		if (isStringNumeric(token.value)) {
 			int num = Integer.parseInt(token.value);
 			output = new types.MalInt(num);
+		} else if (token.value.charAt(0) == '"') {
+			output = new types.MalString(encode(token.value));
+		} else if (token.value.equals("false")) {
+			output = new types.MalFalse();
+		} else if (token.value.equals("true")) {
+			output = new types.MalTrue();
+		} else if (token.value.equals("nil")) {
+			output = new types.MalNil();
 		} else {
 			output = new types.MalSymbol(token.value);
 		}
