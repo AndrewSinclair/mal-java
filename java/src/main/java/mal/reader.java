@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.text.DecimalFormatSymbols;
 
 public class reader {
-	public static types.MalType read_str(String str) {
+	public static types.MalType read_str(String str) throws EofException {
 		List<Token> tokens = tokenizer(str);
 
 		Reader rdr = new Reader();
@@ -28,9 +28,12 @@ public class reader {
 		return tokens;
 	}
 
-	public static types.MalType read_form(Reader rdr) {
+	public static types.MalType read_form(Reader rdr) throws EofException {
 		types.MalType output;
 		Token firstToken = rdr.peek();
+
+		if (firstToken.value.isEmpty()) throw new EofException("expected ')', got EOF");
+
 		char firstChar = firstToken.value.charAt(0);
 
 		switch (firstChar) {
@@ -43,7 +46,7 @@ public class reader {
 		return output;
 	}
 
-	public static types.MalType read_list(Reader rdr) {
+	public static types.MalType read_list(Reader rdr) throws EofException {
 		List<types.MalType> listForms = new ArrayList<>();
 
 		rdr.next(); //discard the top left-paren
@@ -87,7 +90,7 @@ public class reader {
 		return output;
 	}
 
-	public static types.MalType read_atom(Reader rdr) {
+	public static types.MalType read_atom(Reader rdr) throws EofException  {
 		types.MalType output;
 		Token token = rdr.next();
 
@@ -109,12 +112,12 @@ public class reader {
 	}
 	public static class Token {
 		public String value;
-	
+
 		public Token(String value) {
 			this.value = value;
 		}
 	}
-	
+
 	public static class Reader {
 		public int position;
 		public List<Token> tokens;
@@ -123,17 +126,24 @@ public class reader {
 			this.tokens = null;
 			this.position = 0;
 		}
-	
+
 		public Token next() {
 			Token token = this.tokens.get(this.position);
-	
+
 			this.position++;
-	
+
 			return token;
 		}
-	
+
 		public Token peek() {
 			return this.tokens.get(this.position);
+		}
+	}
+
+	@SuppressWarnings("serial")
+	public static class EofException extends Exception {
+		public EofException(String message) {
+			super(message);
 		}
 	}
 }

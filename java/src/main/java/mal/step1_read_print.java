@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class step1_read_print {
 	// read
-	public static types.MalType READ(String str) {
+	public static types.MalType READ(String str) throws reader.EofException {
 		return reader.read_str(str);
 	}
 
@@ -19,25 +19,29 @@ public class step1_read_print {
 	}
 
 	// repl
-	public static String RE(String str) {
+	public static String RE(String str) throws reader.EofException {
 		return PRINT(EVAL(READ(str)));
 	}
 
 	public static void main(String[] args) {
 		String prompt = "user> ";
 
-		Scanner reader = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 		while (true) {
 			String line;
 			try {
 				System.out.print(prompt);
-				line = reader.nextLine();
+				line = scanner.nextLine();
 				if (line == null || line.isEmpty()) { continue; }
+				System.out.println(RE(line));
+			} catch (reader.EofException e) {
+				System.out.println(e.getMessage());
 			} catch (java.util.NoSuchElementException e) {
 				System.out.println("\nBye bye");
 				break;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
-			System.out.println(RE(line));
 		}
 	}
 }
