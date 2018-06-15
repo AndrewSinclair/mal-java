@@ -41,6 +41,7 @@ public class step1_read_print {
 				break;
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 		}
 	}

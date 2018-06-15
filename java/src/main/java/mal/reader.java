@@ -7,7 +7,35 @@ import java.util.regex.Matcher;
 import java.text.DecimalFormatSymbols;
 
 public class reader {
+	public static boolean isQuotesBalanced(String str) {
+		String cleanStr = str.replace("\\\"", "");
+
+		int numQuotes = 0;
+		for(int i = 0; i < cleanStr.length(); i++) {
+			if (cleanStr.charAt(i) == '"') {
+				numQuotes++;
+			}
+		}
+
+		return numQuotes % 2 == 0;
+	}
+
+	public static boolean isBalanced(String str) {
+		int numNested = 0;
+		for(int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == '(') {
+				numNested++;
+			} else if (str.charAt(i) == ')') {
+				numNested--;
+			}
+			if (numNested < 0) return false;
+		}
+		return numNested == 0;
+	}
+
 	public static types.MalType read_str(String str) throws EofException {
+		if (!isBalanced(str)) throw new EofException("expected ')', got EOF");
+		if (!isQuotesBalanced(str)) throw new EofException("expected '\"', got EOF");
 		List<Token> tokens = tokenizer(str);
 
 		Reader rdr = new Reader();
@@ -31,8 +59,6 @@ public class reader {
 	public static types.MalType read_form(Reader rdr) throws EofException {
 		types.MalType output;
 		Token firstToken = rdr.peek();
-
-		if (firstToken.value.isEmpty()) throw new EofException("expected ')', got EOF");
 
 		char firstChar = firstToken.value.charAt(0);
 
@@ -110,6 +136,7 @@ public class reader {
 		}
 		return output;
 	}
+
 	public static class Token {
 		public String value;
 
